@@ -1,10 +1,3 @@
-import cv2
-import numpy as np
-import math
-
-# ----------------------------
-# VARIABLES HUD DYNAMIQUES
-# ----------------------------
 hud_data = {
     "orientation": 0,          # 0° = nord
     "battery_level": 4,        # 0 à 4
@@ -29,78 +22,80 @@ def color_gradient(val, vmin, vmax, start_color, end_color):
     return tuple(int(s*(1-ratio)+e*ratio) for s,e in zip(start_color,end_color))
 
 # ----------------------------
-# FONCTION POUR LA BOUSSOLE
+# FONCTION BOUSSOLE LINÉAIRE
 # ----------------------------
-def draw_compass(frame, orientation):
+def draw_compass(frame, orientation, thickness=3):
     """
-    Dessine une boussole linéaire en haut de l'écran.
-    On ne montre que 120° centrés sur la direction du casque.
+    Dessine une boussole style peigne en haut de l'écran.
+    - Traits tous les degrés
+    - Traits plus grands tous les 5°
+    - Traits encore plus grands tous les 10° avec chiffre
+    - Lettres N/E/S/O si visibles
+    - Épaisseur identique au cube du casque
+    - 120° centrés sur l'orientation du casque
     """
     h, w, _ = frame.shape
     compass_width = w - 100  # marge de 50px de chaque côté
-    compass_height = 50
+    top_y = 50
     center_x = w // 2
-    top_y = 50  # hauteur de la ligne
-
-    # 120° visibles, 60° à gauche et 60° à droite
     visible_deg = 120
     deg_per_pixel = visible_deg / compass_width
 
-    # On dessine les traits pour -60° à +60° autour de l'orientation
     for px in range(compass_width):
         deg = orientation - visible_deg/2 + px * deg_per_pixel
-        deg_mod = deg % 360
+        deg_mod = int(deg) % 360
 
-        # Traits tous les 5° et plus grands tous les 10°
+        # Définir hauteur du trait selon l'intervalle
         if deg_mod % 10 == 0:
-            line_height = 20
+            line_height = 25  # grand trait
+            cv2.line(frame, (px+50, top_y), (px+50, top_y+line_height), (0,255,0), thickness)
+            text = f"{deg_mod}°"
+            cv2.putText(frame, text, (px-10+50, top_y + line_height + 15),
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0,255,0), 1)
         elif deg_mod % 5 == 0:
-            line_height = 10
+            line_height = 15  # moyen
+            cv2.line(frame, (px+50, top_y), (px+50, top_y+line_height), (0,255,0), thickness)
         else:
-            continue
+            line_height = 8   # petit
+            cv2.line(frame, (px+50, top_y), (px+50, top_y+line_height), (0,255,0), thickness)
 
-        cv2.line(frame, (px+50, top_y), (px+50, top_y + line_height), (0,255,0), 2)
-
-    # Lettres cardinales (N, E, S, O) si elles sont visibles
+    # Lettres cardinales
     cardinals = {"N":0, "E":90, "S":180, "O":270}
     for label, deg_card in cardinals.items():
-        # Calcul position relative à l'écran
-        delta_deg = (deg_card - orientation + 180) % 360 - 180  # -180 à 180
+        delta_deg = (deg_card - orientation + 180) % 360 - 180
         if abs(delta_deg) <= visible_deg/2:
             x = int(center_x + (delta_deg / (visible_deg/2)) * (compass_width/2))
-            cv2.putText(frame, label, (x-10, top_y + 40),
-                        cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0,255,0), 2)
+            cv2.putText(frame, label, (x-10, top_y + 50),
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0,255,0), thickness)
 # ----------------------------
-# FONCTION PRINCIPALE HUD
+# FONCTION HUD
 # ----------------------------
 def draw_hud(frame, data=hud_data):
     h, w, _ = frame.shape
     center = (w//2, h//2)
 
-    # --- POINT CENTRAL ---
-    cv2.circle(frame, center, 10, (0,255,0), -1)
+    # --- POINT CENTRAL AVEC PETITE CROIX ---
+    point_size = 5
+    cross_size = 10
+    cv2.circle(frame, center, point_size, (0,255,0), -1)
+    # croix
+    cv2.line(frame, (center[0]-cross_size//2, center[1]), (center[0]+cross_size//2, center[1]), (0,255,0), 2)
+    cv2.line(frame, (center[0], center[1]-cross_size//2), (center[0], center[1]+cross_size//2), (0,255,0), 2)
 
-    # --- CADRE CIBLE ---
-    color_box = (0,255,0) if data["target_found"] else (0,0,255)
+    # --- CADRE AUTOUR DU POINT (100x100) ---
     box_size = 100
-    cv2.rectangle(frame,
-                  (center[0]-box_size//2, center[1]-box_size//2),
-                  (center[0]+box_size//2, center[1]+box_size//2),
-                  color_box, 2)
+    color_box = (0,255,0) if data["target_found"] else (0,0,255)
+    top_left = (center[0]-box_size//2, center[1]-box_size//2)
+    bottom_right = (center[0]+box_size//2, center[1]+box_size//2)
+    cv2.rectangle(frame, top_left, bottom_right, color_box, 2)
 
-    # --- ORIENTATION (degrés) ---
-    cv2.putText(frame, f"{data['orientation']}°", (w//2-30, 50),
-                cv2.FONT_HERSHEY_SIMPLEX, 1, (255,255,255), 2)
-
-    # --- BOUSSOLE ---
+    # --- Boussole ---
     draw_compass(frame, data["orientation"])
 
     # --- BATTERIE HORIZONTALE BAS GAUCHE ---
     battery_x, battery_y = 50, h-80
     battery_w, battery_h = 30, 50
     spacing = 10
-
-    # Cadre général et texte
     total_width = 4*battery_w + 3*spacing
     cv2.rectangle(frame,
                   (battery_x-5, battery_y-30),
@@ -115,21 +110,16 @@ def draw_hud(frame, data=hud_data):
         rect_bottom_right = (rect_top_left[0]+battery_w, battery_y+battery_h)
         cv2.rectangle(frame, rect_top_left, rect_bottom_right, color, -1)
 
-    # --- ARMURE (coin bas droit) ---
+    # --- ARMURE COIN BAS DROIT ---
     overlay = frame.copy()
     alpha = 0.5 if data["lost_connection"] else 1.0
     margin = 50
-    arm_center = (w - 150 - margin, h - 250 - margin)  # coin bas droit
+    arm_center = (w - 150 - margin, h - 250 - margin)
     arm_width, arm_height = 100, 200
 
-    # Ovale autour
-    start_color_top = (173,216,230) # bleu clair
-    end_color_top = (0,0,139)       # bleu foncé
-    col_top = color_gradient(data["humidity_ext"], 0,100, start_color_top, end_color_top)
-    start_color_bottom = (0,255,0)  # vert
-    end_color_bottom = (0,0,255)    # rouge
-    col_bottom = color_gradient(data["temp_ext"], 0,100, start_color_bottom, end_color_bottom)
-
+    # Ovale autour de l'armure
+    col_top = color_gradient(data["humidity_ext"], 0,100,(173,216,230),(0,0,139))
+    col_bottom = color_gradient(data["temp_ext"], 0,100,(0,255,0),(0,0,255))
     cv2.ellipse(overlay, arm_center, (arm_width, arm_height), 0, 0, 180, col_top, 2)
     cv2.ellipse(overlay, arm_center, (arm_width, arm_height), 0, 180, 360, col_bottom, 2)
 
