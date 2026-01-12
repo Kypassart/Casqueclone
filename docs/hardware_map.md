@@ -1,110 +1,96 @@
-Hardware Map – Casque Commando Clone
+# Hardware Map – Casque Commando Clone
 
-Vue d’ensemble
+## Vue d’ensemble
 
 Ce document décrit la répartition physique et logique de tous les composants du système.
 
-Casque (tête)
-Composants
+---
 
-Caméra CSI œil gauche
+## Casque (tête)
 
-Écran HDMI œil gauche
+### Composants
 
-Caméra CSI œil droit
+* Caméra CSI œil gauche
+* Écran HDMI œil gauche
+* Caméra CSI œil droit
+* Écran HDMI œil droit
+* Casque audio (écouteur + micro)
+* ESP32 casque
 
-Écran HDMI œil droit
+### Capteurs ESP32 casque
 
-Casque audio (écouteur + micro)
+* Température / humidité
+* Gyroscope (X, Y, Z)
+* Boussole (orientation absolue)
+* Ventilateur (piloté)
 
-ESP32 casque
+### Rôle
 
-Capteurs ESP32 casque
+* Fournir l’orientation du HUD
+* Fournir l’état thermique interne du casque
+* Commander le refroidissement du casque
 
-Température / humidité
+---
 
-Gyroscope (X, Y, Z)
+## Dos de l’armure (Backpack)
 
-Boussole (orientation absolue)
+### Composants
 
-Ventilateur (piloté)
+* Raspberry Pi 5 (cerveau central)
+* SSD (OS + IA + HUD)
+* Pack énergie
+* ESP32 backpack
+* Ventilateurs
 
-Rôle
+### Capteurs ESP32 backpack
 
-Fournir l’orientation du HUD
+* Température / humidité intérieure
+* Température / humidité extérieure
+* Capteur fumée
+* Capteur CO₂
 
-Fournir l’état thermique interne du casque
+### Rôle
 
-Commander le refroidissement du casque
+* Traitement IA (détection de personnes)
+* Fusion des données capteurs
+* Génération du HUD
+* Gestion thermique globale
+* Sécurité environnementale
 
-Dos de l’armure (Backpack)
-Composants
+---
 
-Raspberry Pi 5 (cerveau central)
+## Bras
 
-SSD (OS + IA + HUD)
+### Composants
 
-Pack énergie
+* Raspberry Pi Zero
+* Écran tactile
+* Batterie dédiée
 
-ESP32 backpack
+### Rôle
 
-Ventilateurs
+* Interface utilisateur
+* Commandes manuelles
+* Sélection des modes HUD
 
-Capteurs ESP32 backpack
+---
 
-Température / humidité intérieure
+## Communications
 
-Température / humidité extérieure
+* Tous les modules communiquent via MQTT
+* Le Raspberry Pi 5 agit comme broker et cerveau central
 
-Capteur fumée
+---
 
-Capteur CO₂
+## Sorties visuelles
 
-Rôle
+* HDMI gauche : œil gauche (caméra gauche + HUD)
+* HDMI droit : œil droit (caméra droite + HUD)
 
-Traitement IA (détection de personnes)
+---
 
-Fusion des données capteurs
+## Notes
 
-Génération du HUD
-
-Gestion thermique globale
-
-Sécurité environnementale
-
-Bras
-Composants
-
-Raspberry Pi Zero
-
-Écran tactile
-
-Batterie dédiée
-
-Rôle
-
-Interface utilisateur
-
-Commandes manuelles
-
-Sélection des modes HUD
-
-Communications
-
-Tous les modules communiquent via MQTT
-
-Le Raspberry Pi 5 agit comme broker et cerveau central
-
-Sorties visuelles
-
-HDMI gauche : œil gauche (caméra gauche + HUD)
-
-HDMI droit : œil droit (caméra droite + HUD)
-
-Notes
-
-L’architecture est pensée pour être modulaire et extensible
-
-Aucun traitement critique n’est effectué sur les ESP32 ou le Pi Zero
-
-Le Pi 5 est le point unique de décision
+* L’architecture est pensée pour être modulaire et extensible
+* Aucun traitement critique n’est effectué sur les ESP32 ou le Pi Zero
+* Le Pi 5 est le point unique de décision
