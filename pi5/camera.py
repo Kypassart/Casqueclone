@@ -1,82 +1,49 @@
-"""
-camera.py
-Gestion des deux caméras CSI (œil gauche / œil droit) via rpicam-vid
-Sortie OpenCV compatible HUD
-Pi OS Bookworm – Raspberry Pi 5
-"""
-
+#!/usr/bin/env python3
 import cv2
 import subprocess
-import threading
 
-# Commandes rpicam pour chaque œil
-PIPE_LEFT = (
-    "rpicam-vid -t 0 --camera 0 --width 1280 --height 720 --framerate 30 "
-    "--codec h264 --inline -o - | "
-    "gst-launch-1.0 fdsrc ! h264parse ! avdec_h264 "
-    "! videoconvert ! appsink"
-)
+# --- Configuration ---
+CAM_WIDTH = 640
+CAM_HEIGHT = 480
+FPS = 30
 
-PIPE_RIGHT = (
-    "rpicam-vid -t 0 --camera 1 --width 1280 --height 720 --framerate 30 "
-    "--codec h264 --inline -o - | "
-    "gst-launch-1.0 fdsrc ! h264parse ! avdec_h264 "
-    "! videoconvert ! appsink"
-)
+# --- Commande rpicam-vid pour capturer la caméra en MJPEG ---
+# Sortie dans un pipe que OpenCV peut lire
+cam_cmd = [
+    "rpicam-vid",
+    "-t", "0",  # temps infini
+    "--inline",
+    "--nopreview",
+    "--width", str(CAM_WIDTH),
+    "--height", str(CAM_HEIGHT),
+    "--framerate", str(FPS),
+    "--output", "-"  # sortie stdout
+]
 
-class CameraStream:
-    def __init__(self, pipe, name="camera"):
-        self.pipe = pipe
-        self.name = name
-        self.cap = None
-        self.running = False
-        self.frame = None
+# --- Ouvrir le flux caméra via OpenCV ---
+cam_process = subprocess.Popen(cam_cmd, stdout=subprocess.PIPE, bufsize=10**8)
 
-    def start(self):
-        self.cap = cv2.VideoCapture(self.pipe, cv2.CAP_GSTREAMER)
-        if not self.cap.isOpened():
-            raise RuntimeError(f"Impossible d'ouvrir {self.name}")
-        self.running = True
-        threading.Thread(target=self.update, daemon=True).start()
+cap = cv2.VideoCapture(cam_process.stdout)
 
-    def update(self):
-        while self.running:
-            ret, frame = self.cap.read()
-            if ret:
-                self.frame = frame
+if not cap.isOpened():
+    print("Impossible d'ouvrir la caméra")
+    exit(1)
 
-    def read(self):
-        return self.frame
+# --- Fenêtre fullscreen ---
+cv2.namedWindow("Cam Fullscreen", cv2.WND_PROP_FULLSCREEN)
+cv2.setWindowProperty("Cam Fullscreen", cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
 
-    def stop(self):
-        self.running = False
-        if self.cap:
-            self.cap.release()
+while True:
+    ret, frame = cap.read()
+    if not ret:
+        continue
 
+    # Affiche l'image plein écran
+    cv2.imshow("Cam Fullscreen", frame)
 
-def start_dual_camera():
-    left = CameraStream(PIPE_LEFT, "œil gauche")
-    right = CameraStream(PIPE_RIGHT, "œil droit")
+    # Quitte sur ESC
+    if cv2.waitKey(1) & 0xFF == 27:
+        break
 
-    left.start()
-    right.start()
-
-    return left, right
-
-
-# Test standalone
-if __name__ == "__main__":
-    left, right = start_dual_camera()
-
-    while True:
-        if left.read() is not None:
-            cv2.imshow("Oeil gauche", left.read())
-        if right.read() is not None:
-            cv2.imshow("Oeil droit", right.read())
-
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            break
-
-    left.stop()
-    right.stop()
-    cv2.destroyAllWindows()
+cap.release()
+cv2.destroyAllWindows()
