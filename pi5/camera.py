@@ -1,49 +1,46 @@
 #!/usr/bin/env python3
 import cv2
-import subprocess
+import time
+from picamera2 import Picamera2
 
-# --- Configuration ---
-CAM_WIDTH = 640
-CAM_HEIGHT = 480
-FPS = 30
+# --- INITIALISATION DES CAMERAS ---
+cam_left = Picamera2(0)
+cam_right = Picamera2(1)
 
-# --- Commande rpicam-vid pour capturer la caméra en MJPEG ---
-# Sortie dans un pipe que OpenCV peut lire
-cam_cmd = [
-    "rpicam-vid",
-    "-t", "0",  # temps infini
-    "--inline",
-    "--nopreview",
-    "--width", str(CAM_WIDTH),
-    "--height", str(CAM_HEIGHT),
-    "--framerate", str(FPS),
-    "--output", "-"  # sortie stdout
-]
+config_left = cam_left.create_video_configuration(
+    main={"size": (1920,1080), "format": "RGB888"}, buffer_count=6
+)
+config_right = cam_right.create_video_configuration(
+    main={"size": (1920,1080), "format": "RGB888"}, buffer_count=6
+)
 
-# --- Ouvrir le flux caméra via OpenCV ---
-cam_process = subprocess.Popen(cam_cmd, stdout=subprocess.PIPE, bufsize=10**8)
+cam_left.configure(config_left)
+cam_right.configure(config_right)
 
-cap = cv2.VideoCapture(cam_process.stdout)
+cam_left.start()
+cam_right.start()
+time.sleep(1)  # laisse la caméra démarrer
 
-if not cap.isOpened():
-    print("Impossible d'ouvrir la caméra")
-    exit(1)
+# --- FENETRES PLEIN ECRAN SUR CHAQUE HDMI ---
+cv2.namedWindow("LEFT", cv2.WINDOW_NORMAL)
+cv2.moveWindow("LEFT", 0, 0)
+cv2.setWindowProperty("LEFT", cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
 
-# --- Fenêtre fullscreen ---
-cv2.namedWindow("Cam Fullscreen", cv2.WND_PROP_FULLSCREEN)
-cv2.setWindowProperty("Cam Fullscreen", cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
+cv2.namedWindow("RIGHT", cv2.WINDOW_NORMAL)
+cv2.moveWindow("RIGHT", 1920, 0)
+cv2.setWindowProperty("RIGHT", cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
 
+# --- BOUCLE D'AFFICHAGE ---
 while True:
-    ret, frame = cap.read()
-    if not ret:
-        continue
+    frame_left = cam_left.capture_array()
+    frame_right = cam_right.capture_array()
 
-    # Affiche l'image plein écran
-    cv2.imshow("Cam Fullscreen", frame)
+    cv2.imshow("LEFT", frame_left)
+    cv2.imshow("RIGHT", frame_right)
 
-    # Quitte sur ESC
-    if cv2.waitKey(1) & 0xFF == 27:
+    if cv2.waitKey(1) & 0xFF == 27:  # ESC pour quitter
         break
 
-cap.release()
+cam_left.stop()
+cam_right.stop()
 cv2.destroyAllWindows()
