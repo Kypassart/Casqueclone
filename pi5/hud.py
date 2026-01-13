@@ -58,6 +58,24 @@ def draw_hud(frame, data):
     color_box = (0,255,0) if data["target_found"] else (0,0,255)
     cv2.rectangle(frame, (center[0]-box_size//2, center[1]-box_size//2),
                          (center[0]+box_size//2, center[1]+box_size//2), color_box, 1)
+    box2_size = 50
+    color_box2 = (0,255,0) if data["target_found"] else (0,0,255)
+    #trait vertical angle gauche haut
+    cv2.line(frame, (center[0]-box_size//2, center[1]+box_size//2), (center[0]-box_size//2, (center[1]+box_size//2)-5), color_box, 1)
+    #trait horizontal angle gauche haut
+    cv2.line(frame, (center[0]+box_size//2, center[1]-box_size//2), ((center[0]+box_size//2)+5, center[1]-box_size//2), color_box, 1)
+    #trait vertical angle droit haut
+    cv2.line(frame, (center[0]+box_size//2, center[1]+box_size//2), (center[0]+box_size//2, ((center[1]+box_size//2)-5), color_box, 1)
+    #trait horizontal angle droit haut
+    cv2.line(frame, (center[0]+box_size//2, center[1]+box_size//2), ((center[0]+box_size//2)-5, center[1]+box_size//2), color_box, 1)
+    #trait vertical angle gauche bas
+    cv2.line(frame, (center[0]-box_size//2, center[1]-box_size//2), (center[0]-box_size//2, (center[1]-box_size//2)+5), color_box, 1)
+    #trait horizontal angle gauche bas
+    cv2.line(frame, (center[0]-box_size//2), center[1]-box_size//2), ((center[0]+box_size//2)+5, center[1]-box_size//2), color_box, 1)
+    #trait vertical angle droit bas
+    cv2.line(frame, (center[0]+box_size//2, center[1]-box_size//2), (center[0]+box_size//2, ((center[1]-box_size//2)+5), color_box, 1)
+    #trait horizontal angle droit bas
+    cv2.line(frame, (center[0]+box_size//2, center[1]+box_size//2), ((center[0]+box_size//2)-5, center[1]-box_size//2), color_box, 1)
 
     # Boussole
     draw_compass(frame, data["orientation"])
