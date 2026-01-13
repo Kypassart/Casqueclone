@@ -1,3 +1,10 @@
+import cv2
+import numpy as np
+import math
+
+# ----------------------------
+# VARIABLES HUD DYNAMIQUES
+# ----------------------------
 hud_data = {
     "orientation": 0,          # 0° = nord
     "battery_level": 4,        # 0 à 4
