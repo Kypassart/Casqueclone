@@ -86,8 +86,8 @@ def draw_hud(frame, data):
     # Ovale
     col_top = color_gradient(data["humidity_ext"], 0,100,(173,216,230),(0,0,139))
     col_bottom = color_gradient(data["temp_ext"], 0,100,(0,255,0),(0,0,255))
-    cv2.ellipse(overlay, arm_center, (arm_width, arm_height), 0, 0, 180, col_top,2)
-    cv2.ellipse(overlay, arm_center, (arm_width, arm_height),0,180,360,col_bottom,2)
+    cv2.ellipse(overlay, arm_center, (arm_width, arm_height), 0, 0, 180, col_top,1)
+    cv2.ellipse(overlay, arm_center, (arm_width, arm_height),0,180,360,col_bottom,1)
 
     # Tête
     head_top_left = (arm_center[0]-20, arm_center[1]-arm_height//2)
@@ -106,10 +106,10 @@ def draw_hud(frame, data):
     cv2.rectangle(overlay, torso_top_left, torso_bottom_right, torso_fill_col,-1)
 
     # Bras et jambes
-    cv2.rectangle(overlay, (arm_center[0]+20, arm_center[1]-30),(arm_center[0]+60, arm_center[1]+30),(255,255,255),2)
-    cv2.rectangle(overlay, (arm_center[0]-60, arm_center[1]-30),(arm_center[0]-20, arm_center[1]+30),(255,255,255),2)
-    cv2.rectangle(overlay, (arm_center[0], arm_center[1]+60),(arm_center[0]+20, arm_center[1]+120),(255,255,255),2)
-    cv2.rectangle(overlay, (arm_center[0]-20, arm_center[1]+60),(arm_center[0], arm_center[1]+120),(255,255,255),2)
+    cv2.rectangle(overlay, (arm_center[0]+20, arm_center[1]-30),(arm_center[0]+60, arm_center[1]+30),(255,255,255),1)
+    cv2.rectangle(overlay, (arm_center[0]-60, arm_center[1]-30),(arm_center[0]-20, arm_center[1]+30),(255,255,255),1)
+    cv2.rectangle(overlay, (arm_center[0], arm_center[1]+60),(arm_center[0]+20, arm_center[1]+120),(255,255,255),1)
+    cv2.rectangle(overlay, (arm_center[0]-20, arm_center[1]+60),(arm_center[0], arm_center[1]+120),(255,255,255),1)
 
     # Symboles radioactifs
     col_ext = color_gradient(data["air_quality_ext"],0,2,(0,255,0),(0,0,255))
