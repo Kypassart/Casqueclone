@@ -9,7 +9,7 @@ def color_gradient(val, vmin, vmax, start_color, end_color):
     return tuple(int(s*(1-ratio)+e*ratio) for s,e in zip(start_color,end_color))
 
 # --- Boussole ---
-def draw_compass(frame, orientation, thickness=3):
+def draw_compass(frame, orientation, thickness=1):
     h, w, _ = frame.shape
     compass_width = w - 100
     top_y = 50
@@ -50,14 +50,14 @@ def draw_hud(frame, data):
 
     # Point central + petite croix
     cv2.circle(frame, center, 5, (0,255,0), -1)
-    cv2.line(frame, (center[0]-5, center[1]), (center[0]+5, center[1]), (0,255,0), 2)
-    cv2.line(frame, (center[0], center[1]-5), (center[0], center[1]+5), (0,255,0), 2)
+    cv2.line(frame, (center[0]-5, center[1]), (center[0]+5, center[1]), (0,255,0), 1)
+    cv2.line(frame, (center[0], center[1]-5), (center[0], center[1]+5), (0,255,0), 1)
 
     # Cadre autour du point
     box_size = 100
     color_box = (0,255,0) if data["target_found"] else (0,0,255)
     cv2.rectangle(frame, (center[0]-box_size//2, center[1]-box_size//2),
-                         (center[0]+box_size//2, center[1]+box_size//2), color_box, 2)
+                         (center[0]+box_size//2, center[1]+box_size//2), color_box, 1)
 
     # Boussole
     draw_compass(frame, data["orientation"])
@@ -68,9 +68,9 @@ def draw_hud(frame, data):
     spacing = 10
     total_width = 4*battery_w + 3*spacing
     cv2.rectangle(frame, (battery_x-5, battery_y-30),
-                         (battery_x + total_width + 5, battery_y + battery_h +5), (255,255,255),2)
+                         (battery_x + total_width + 5, battery_y + battery_h +5), (255,255,255),1)
     cv2.putText(frame, "BATTERIE", (battery_x, battery_y-10),
-                cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255,255,255), 2)
+                cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255,255,255), 1)
     for i in range(4):
         color = (0,255,0) if i < data["battery_level"] else (50,50,50)
         cv2.rectangle(frame, (battery_x+i*(battery_w+spacing), battery_y),
