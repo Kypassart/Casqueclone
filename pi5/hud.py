@@ -49,7 +49,7 @@ def draw_hud(frame, data):
     center = (w//2, h//2)
 
     # Point central + petite croix
-    cv2.circle(frame, center, 5, (0,255,0), -1)
+    cv2.circle(frame, center, 2, (0,255,0), -1)
     cv2.line(frame, (center[0]-5, center[1]), (center[0]+5, center[1]), (0,255,0), 1)
     cv2.line(frame, (center[0], center[1]-5), (center[0], center[1]+5), (0,255,0), 1)
 
