@@ -1,0 +1,93 @@
+﻿{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "ESP32 - Check Version",
+            "type": "shell",
+            "command": "python",
+            "args": ["-m", "esptool", "version"],
+            "problemMatcher": []
+        },
+        {
+            "label": "ESP32 - List Ports",
+            "type": "shell",
+            "command": "python",
+            "args": ["-c", "import serial.tools.list_ports; [print(p.device) for p in serial.tools.list_ports.comports()]"],
+            "problemMatcher": []
+        },
+        {
+            "label": "ESP32 Helmet - Erase Flash",
+            "type": "shell",
+            "command": "python",
+            "args": ["-m", "esptool", "--port", "COM3", "erase_flash"],
+            "problemMatcher": []
+        },
+        {
+            "label": "ESP32 Helmet - Flash MicroPython",
+            "type": "shell",
+            "command": "python",
+            "args": [
+                "-m", "esptool",
+                "--chip", "esp32",
+                "--port", "COM3",
+                "--baud", "460800",
+                "write_flash",
+                "-z", "0x1000",
+                "${input:micropythonBinPath}"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "ESP32 Helmet - Upload All Files",
+            "type": "shell",
+            "command": "python",
+            "args": [
+                "-m", "mpremote",
+                "connect", "COM3",
+                "fs", "cp", "helmet/esp32_helmet/config.py", ":config.py",
+                "+", "fs", "cp", "helmet/esp32_helmet/boot.py", ":boot.py",
+                "+", "fs", "cp", "helmet/esp32_helmet/sensors.py", ":sensors.py",
+                "+", "fs", "cp", "helmet/esp32_helmet/mqtt_client.py", ":mqtt_client.py",
+                "+", "fs", "cp", "helmet/esp32_helmet/main.py", ":main.py",
+                "+", "reset"
+            ],
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "ESP32 Backpack - Upload All Files",
+            "type": "shell",
+            "command": "python",
+            "args": [
+                "-m", "mpremote",
+                "connect", "COM4",
+                "fs", "cp", "backpack/esp32_backpack/config.py", ":config.py",
+                "+", "fs", "cp", "backpack/esp32_backpack/boot.py", ":boot.py",
+                "+", "fs", "cp", "backpack/esp32_backpack/sensors.py", ":sensors.py",
+                "+", "fs", "cp", "backpack/esp32_backpack/mqtt_client.py", ":mqtt_client.py",
+                "+", "fs", "cp", "backpack/esp32_backpack/main.py", ":main.py",
+                "+", "reset"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "ESP32 - Monitor Serial (mpremote)",
+            "type": "shell",
+            "command": "python",
+            "args": ["-m", "mpremote", "connect", "COM3"],
+            "problemMatcher": [],
+            "isBackground": true
+        }
+    ],
+    "inputs": [
+        {
+            "id": "micropythonBinPath",
+            "type": "promptString",
+            "description": "Chemin complet vers le fichier MicroPython .bin",
+            "default": "C:/Users/olivi/Downloads/ESP32_GENERIC-20250122-v1.24.1.bin"
+        }
+    ]
+}
