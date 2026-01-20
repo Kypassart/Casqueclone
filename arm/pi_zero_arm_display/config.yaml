@@ -1,0 +1,14 @@
+﻿mqtt:
+  broker: "192.168.4.1"
+  port: 1883
+  client_id: "arm_display"
+
+display:
+  width: 800
+  height: 480
+  fullscreen: true
+  fps: 30
+
+logging:
+  level: "INFO"
+  file: "logs/arm_display.log"

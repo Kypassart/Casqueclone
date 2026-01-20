@@ -1,0 +1,15 @@
+﻿# MQTT
+paho-mqtt==1.6.1
+
+# Configuration
+PyYAML==6.0.1
+
+# I2C (INA219)
+smbus2==0.4.3
+pi-ina219==1.4.0
+
+# GPIO
+RPi.GPIO==0.7.1
+
+# Utilities
+python-dotenv==1.0.0

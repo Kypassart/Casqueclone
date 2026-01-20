@@ -1,0 +1,37 @@
+﻿"""
+Global constants for Casqueclone project
+"""
+
+# MQTT Configuration
+MQTT_BROKER = "192.168.4.1"  # Pi 5 AP address
+MQTT_PORT = 1883
+MQTT_KEEPALIVE = 60
+MQTT_QOS = 1
+
+# Camera settings
+CAMERA_RESOLUTION = (640, 480)
+CAMERA_FPS = 10
+CAMERA_FORMAT = "RGB888"
+
+# Display settings
+OLED_WIDTH = 128
+OLED_HEIGHT = 64
+OLED_I2C_ADDRESS = 0x3C
+
+# Sensor I2C addresses
+BNO055_ADDRESS = 0x28
+BME280_ADDRESS = 0x76
+ENS160_ADDRESS = 0x53
+AHT21_ADDRESS = 0x38
+INA219_ADDRESS = 0x40
+
+# Timing
+SENSOR_READ_INTERVAL = 1.0  # seconds
+CAMERA_STREAM_INTERVAL = 0.1  # seconds (10 FPS)
+HUD_UPDATE_INTERVAL = 0.05  # seconds (20 FPS)
+
+# Alerts thresholds
+TEMP_MAX_WARNING = 35  # °C
+CO_MAX_WARNING = 50  # ppm
+SMOKE_MAX_WARNING = 300  # ppm
+BATTERY_LOW_WARNING = 20  # %

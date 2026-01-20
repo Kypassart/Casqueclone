@@ -1,0 +1,20 @@
+﻿# MQTT Broker
+paho-mqtt==1.6.1
+
+# YOLO / Computer Vision
+ultralytics==8.1.0
+opencv-python==4.9.0.80
+torch==2.1.2
+torchvision==0.16.2
+numpy==1.24.3
+Pillow==10.1.0
+
+# Web server (optionnel)
+flask==3.0.0
+flask-socketio==5.3.6
+
+# Configuration
+PyYAML==6.0.1
+
+# Utilities
+python-dotenv==1.0.0

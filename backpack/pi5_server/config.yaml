@@ -1,0 +1,22 @@
+﻿mqtt:
+  broker: "0.0.0.0"  # Listen on all interfaces
+  port: 1883
+  keepalive: 60
+
+yolo:
+  model: "yolov8n.pt"  # Nano model for performance
+  confidence: 0.5
+  device: "cpu"  # or "cuda" if GPU available
+  classes: null  # null = all classes, or [0, 1, 2] for specific
+
+wifi_ap:
+  ssid: "CloneTrooper-HUD"
+  password: "Order66Execute"
+  channel: 6
+  ip_address: "192.168.4.1"
+  netmask: "255.255.255.0"
+  dhcp_range: "192.168.4.10,192.168.4.50"
+
+logging:
+  level: "INFO"
+  file: "logs/pi5_server.log"

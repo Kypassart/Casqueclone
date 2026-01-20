@@ -1,0 +1,21 @@
+﻿mqtt:
+  broker: "192.168.4.1"
+  port: 1883
+  client_id: "helmet_right_eye"
+  keepalive: 60
+
+camera:
+  resolution: [640, 480]
+  fps: 10
+  format: "RGB888"
+
+display:
+  i2c_address: 0x3C
+  width: 128
+  height: 64
+  type: "SSD1306"
+  i2c_bus: 1
+
+logging:
+  level: "INFO"
+  file: "logs/right_eye.log"

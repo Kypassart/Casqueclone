@@ -1,0 +1,13 @@
+﻿# Development dependencies
+
+#Testing
+pytest==7.4.3
+pytest-cov==4.1.0
+pytest-mock==3.12.0
+Code quality
+black==23.12.1
+flake8==7.0.0
+pylint==3.0.3
+Documentation
+mkdocs==1.5.3
+mkdocs-material==9.5.3

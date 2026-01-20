@@ -1,0 +1,14 @@
+﻿# MQTT
+paho-mqtt==1.6.1
+
+# GUI
+pygame==2.5.2
+
+# Configuration
+PyYAML==6.0.1
+
+# GPIO
+RPi.GPIO==0.7.1
+
+# Utilities
+python-dotenv==1.0.0

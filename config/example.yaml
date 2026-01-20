@@ -1,0 +1,22 @@
+﻿# Example configuration file
+# Copy to config/local.yaml and customize
+
+mqtt:
+  broker: "192.168.4.1"
+  port: 1883
+  
+wifi_ap:
+  ssid: "CloneTrooper-HUD"
+  password: "Order66Execute"
+
+components:
+  helmet_right:
+    enabled: true
+  helmet_left:
+    enabled: true
+  backpack:
+    enabled: true
+  arm_display:
+    enabled: true
+  energy_monitor:
+    enabled: true

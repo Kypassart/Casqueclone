@@ -1,0 +1,17 @@
+﻿mqtt:
+  broker: "192.168.4.1"
+  port: 1883
+  client_id: "energy_monitor"
+
+battery:
+  ina219_address: 0x40
+  capacity_mah: 10000
+  voltage_min: 3.0
+  voltage_max: 4.2
+  
+monitoring:
+  interval: 5  # seconds
+  
+logging:
+  level: "INFO"
+  file: "logs/energy.log"
