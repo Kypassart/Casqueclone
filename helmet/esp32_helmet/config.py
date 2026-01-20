@@ -1,0 +1,32 @@
+﻿"""
+Configuration for ESP32 Helmet
+"""
+
+# WiFi
+WIFI_SSID = 'CloneTrooper-HUD'
+WIFI_PASSWORD = 'Order66Execute'
+
+# MQTT
+MQTT_BROKER = '192.168.4.1'
+MQTT_PORT = 1883
+MQTT_CLIENT_ID = 'esp32_helmet'
+
+# I2C
+I2C_SDA = 21
+I2C_SCL = 22
+I2C_FREQ = 100000
+
+# Sensors I2C addresses
+BNO055_ADDR = 0x28
+BME280_ADDR = 0x76
+ENS160_ADDR = 0x53
+AHT21_ADDR = 0x38
+INA219_ADDR = 0x40
+PCA9548A_ADDR = 0x70
+
+# Ventilateur
+FAN_PIN = 25
+FAN_PWM_FREQ = 25000
+
+# Timing
+SENSOR_READ_INTERVAL = 1  # secondes
